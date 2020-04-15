@@ -31,6 +31,9 @@ class Menu extends Phaser.Scene {
         let centerY = game.config.height / 2;
         let textSpacer = 64;
 
+        //Display High Score
+        this.add.text(centerX, 100, 'High Score: ' + highScore, menuConfig).setOrigin(0.5);
+
         this.add.text(centerX, centerY - textSpacer, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
         this.add.text(centerX, centerY, 'Use ←→ arrows to Move & Space to Fire', menuConfig).setOrigin(0.5);
         this.add.text(centerX, centerY + textSpacer, 'P2: Use A/D to Move & W to Fire', menuConfig).setOrigin(0.5);
@@ -73,8 +76,8 @@ class Menu extends Phaser.Scene {
             // hard mode
             game.settings = {
                 spaceshipSpeed: 4,
-                gameTimer: 45000,
-                singlePlayer: true
+                gameTimer: 60000,
+                singlePlayer: false
             }
             this.sound.play('sfx_select');
             this.scene.start("playScene");
