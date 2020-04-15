@@ -32,10 +32,12 @@ class Menu extends Phaser.Scene {
         let textSpacer = 64;
 
         this.add.text(centerX, centerY - textSpacer, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
-        this.add.text(centerX, centerY, 'Use <-> arrows to move & (F) to Fire', menuConfig).setOrigin(0.5);
+        this.add.text(centerX, centerY, 'Use ←→ arrows to Move & Space to Fire', menuConfig).setOrigin(0.5);
+        this.add.text(centerX, centerY + textSpacer, 'P2: Use A/D to Move & W to Fire', menuConfig).setOrigin(0.5);
         menuConfig.backgroundColor = '#00FF00';
         menuConfig.color = '#000';
-        this.add.text(centerX, centerY + textSpacer, 'Press <- for Easy or -> for Hard', menuConfig).setOrigin(0.5);
+        this.add.text(centerX, centerY + 2 * textSpacer, 'Press ← for Easy or → for Hard', menuConfig).setOrigin(0.5);
+        this.add.text(centerX, centerY + 3 * textSpacer, 'or ↓ for 2 Player', menuConfig).setOrigin(0.5);
 
         //Launch the next scene
         //this.scene.start("playScene");
@@ -43,6 +45,7 @@ class Menu extends Phaser.Scene {
         // define keys
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
     }
 
     update() {
@@ -50,7 +53,8 @@ class Menu extends Phaser.Scene {
             // easy mode
             game.settings = {
                 spaceshipSpeed: 3,
-                gameTimer: 60000
+                gameTimer: 60000,
+                singlePlayer: true
             }
             this.sound.play('sfx_select');
             this.scene.start("playScene");
@@ -59,7 +63,18 @@ class Menu extends Phaser.Scene {
             // hard mode
             game.settings = {
                 spaceshipSpeed: 4,
-                gameTimer: 45000
+                gameTimer: 45000,
+                singlePlayer: true
+            }
+            this.sound.play('sfx_select');
+            this.scene.start("playScene");
+        }
+        if (Phaser.Input.Keyboard.JustDown(keyDOWN)) {
+            // hard mode
+            game.settings = {
+                spaceshipSpeed: 4,
+                gameTimer: 45000,
+                singlePlayer: true
             }
             this.sound.play('sfx_select');
             this.scene.start("playScene");

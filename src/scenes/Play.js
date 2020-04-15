@@ -6,6 +6,7 @@ class Play extends Phaser.Scene {
     preload() {
         //load images/tile sprite
         this.load.image("rocket", "./assets/rocket.png");
+        this.load.image("rocket2", "./assets/rocket2.png");
         this.load.image("spaceship", "./assets/spaceship.png");
         this.load.image("starfield", "./assets/starfield.png");
         this.load.spritesheet("explosion", "./assets/explosion.png",
@@ -26,7 +27,9 @@ class Play extends Phaser.Scene {
         this.add.rectangle(37, 42, 566, 64, 0x00FF00).setOrigin(0, 0);
 
         //Add rocket (Player 1)
-        this.p1Rocket = new Rocket(this, game.config.width / 2, 431, "rocket").setScale(0.5, 0.5).setOrigin(0, 0);
+        this.p1Rocket = new Rocket(this, game.config.width / 2, 431, "rocket", 1).setScale(0.5, 0.5).setOrigin(0, 0);
+        //Add rocket (Player 2)
+        this.p2Rocket = new Rocket(this, game.config.width / 2 + 20, 431, "rocket2", 2).setScale(0.5, 0.5).setOrigin(0, 0);
 
         //Add spaceships
         this.ship01 = new Spaceship(this, game.config.width + 192, 132, "spaceship", 0, 30).setOrigin(0, 0);
@@ -34,9 +37,12 @@ class Play extends Phaser.Scene {
         this.ship03 = new Spaceship(this, game.config.width, 260, "spaceship", 0, 10).setOrigin(0, 0);
 
         //Define keyboard keys
-        keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+        keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
         this.anims.create({
             key: "explode",
@@ -46,6 +52,7 @@ class Play extends Phaser.Scene {
 
         //score
         this.p1Score = 0;
+        this.p2Score = 0;
 
         //score display
         let scoreConfig = {
@@ -61,6 +68,7 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(69, 54, this.p1Score, scoreConfig);
+        this.scoreRight = this.add.text(470, 54, this.p2Score, scoreConfig);
 
         //game over flag
         this.gameOver = false;
@@ -69,7 +77,7 @@ class Play extends Phaser.Scene {
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.add.text(game.config.width / 2, game.config.height / 2, "GAME OVER", scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width / 2, game.config.height / 2 + 64, "(F)ire to Restart or <- for Menu", scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width / 2, game.config.height / 2 + 64, "Space to Restart or <- for Menu", scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
 
@@ -78,10 +86,10 @@ class Play extends Phaser.Scene {
     update() {
 
         //check key inout for restart
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyF)) {
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keySPACE)) {
             this.scene.restart(this.p1Score);
         }
-        if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)){
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.scene.start("menuScene");
         }
 
@@ -89,24 +97,39 @@ class Play extends Phaser.Scene {
         this.starfield.tilePositionX -= 4;
 
         if (!this.gameOver) {
-            this.p1Rocket.update(); //Update Rocket
+            this.p1Rocket.update(); //Update P1 Rocket
+            this.p2Rocket.update(); //Update P2 Rocket
             this.ship01.update(); //Update spaceships(x3)
             this.ship02.update();
             this.ship03.update();
         }
 
-        //Check collisions
+        //Check P1 collisions
         if (this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset();
-            this.shipExplode(this.ship03);
+            this.shipExplode(this.ship03, this.p1Rocket);
         }
         if (this.checkCollision(this.p1Rocket, this.ship02)) {
             this.p1Rocket.reset();
-            this.shipExplode(this.ship02);
+            this.shipExplode(this.ship02, this.p1Rocket);
         }
         if (this.checkCollision(this.p1Rocket, this.ship01)) {
             this.p1Rocket.reset();
-            this.shipExplode(this.ship01);
+            this.shipExplode(this.ship01, this.p1Rocket);
+        }
+
+        //Check P2 collisions
+        if (this.checkCollision(this.p2Rocket, this.ship03)) {
+            this.p2Rocket.reset();
+            this.shipExplode(this.ship03, this.p2Rocket);
+        }
+        if (this.checkCollision(this.p2Rocket, this.ship02)) {
+            this.p2Rocket.reset();
+            this.shipExplode(this.ship02, this.p2Rocket);
+        }
+        if (this.checkCollision(this.p2Rocket, this.ship01)) {
+            this.p2Rocket.reset();
+            this.shipExplode(this.ship01, this.p2Rocket);
         }
     }
 
@@ -122,7 +145,7 @@ class Play extends Phaser.Scene {
         }
     }
 
-    shipExplode(ship) {
+    shipExplode(ship, rocket) {
         ship.alpha = 0;
         //create explosion spire at ship's position
         let boom = this.add.sprite(ship.x, ship.y, "explosion").setOrigin(0, 0);
@@ -133,9 +156,16 @@ class Play extends Phaser.Scene {
             boom.destroy();
         });
 
-        //score increment and repaint
-        this.p1Score += ship.points;
-        this.scoreLeft.text = this.p1Score;
+        if (rocket.playerNumber == 1) {
+            //score increment and repaint
+            this.p1Score += ship.points;
+            this.scoreLeft.text = this.p1Score;
+        } else {
+            //score increment and repaint
+            this.p2Score += ship.points;
+            this.scoreRight.text = this.p2Score;
+        }
+
 
         this.sound.play('sfx_explosion');
     }
