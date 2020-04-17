@@ -134,7 +134,6 @@ class Play extends Phaser.Scene {
             this.ship02.update();
             this.ship03.update();
 
-            // this.clockDisplay.setText("Time: " + game.settings.gameTimer - Math.floor(this.clock.getElapsedSeconds()));
             this.clockDisplay.setText((game.settings.gameTimer/1000) - Math.floor(this.clock.getElapsedSeconds()));
         }
 
