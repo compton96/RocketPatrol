@@ -76,7 +76,7 @@ class Play extends Phaser.Scene {
         this.scoreRight = this.add.text(470, 54, this.p2Score, scoreConfig);
 
         scoreConfig.fixedWidth = 0;
-        this.clockDisplay = this.add.text(270, 42, "Time: " + this.game.settings.gameTimer, scoreConfig);
+        this.clockDisplay = this.add.text(300, 42, "Time: " + this.game.settings.gameTimer, scoreConfig);
         this.highScoreDisplay = this.add.text(320, 88, "High Score: " + highScore, scoreConfig).setOrigin(0.5);
 
         //game over flag
@@ -134,7 +134,8 @@ class Play extends Phaser.Scene {
             this.ship02.update();
             this.ship03.update();
 
-            this.clockDisplay.setText("Time: " + Math.floor(this.clock.getElapsedSeconds()));
+            // this.clockDisplay.setText("Time: " + game.settings.gameTimer - Math.floor(this.clock.getElapsedSeconds()));
+            this.clockDisplay.setText((game.settings.gameTimer/1000) - Math.floor(this.clock.getElapsedSeconds()));
         }
 
         //Check P1 collisions
