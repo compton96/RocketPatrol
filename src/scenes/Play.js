@@ -93,6 +93,10 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        //Speed increase after 30 seconds
+        if(Math.floor(this.clock.getElapsedSeconds() > 30)){
+            game.settings.spaceshipSpeed = 4;
+        }
 
         //check key input for restart\
         this.topScore;

@@ -1,3 +1,12 @@
+/*
+Points Breakdown:
+    Simultaneous 2 Player - 50pts
+    Parallax Scrolling - 15pts
+    Display Remaining Time - 15pts
+    Track high Score - 10pts
+    Spaceship speed increase after 30 seconds - 10pts
+*/
+
 let config = 
 {
     type: Phaser.CANVAS,
